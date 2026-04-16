@@ -1,11 +1,11 @@
 ---
 name: fifteen-puzzle
-description: Play the classic 15-puzzle sliding tile game (Пятнашка / Пятнашки). Start a new game or make moves. Triggers on phrases like "сыграем в пятнашки", "fifteen puzzle", "sliding puzzle", "новая игра пятнашки", "move tile", "slide up/down/left/right".
+description: Play the classic 15-puzzle sliding tile game (15-puzzle / sliding tiles). Start a new game or make moves. Triggers on phrases like "play 15 puzzle", "fifteen puzzle", "sliding puzzle", "new game 15 puzzle", "move tile", "slide up/down/left/right".
 metadata:
   homepage: https://github.com/google-ai-edge/gallery/discussions/categories/skills
 ---
 
-# 🧩 Fifteen Puzzle — Пятнашка
+# 🧩 Fifteen Puzzle Engine
 
 A classic sliding tile game. Arrange tiles 1–15 in order with the empty space in the bottom-right corner.
 
@@ -26,14 +26,23 @@ For every move, call the `run_js` tool:
 ## Translating User Input to Direction
 
 The `direction` is where the EMPTY SPACE moves (the tile slides the opposite way):
-- User says "вверх" / "up" / "↑" → direction `"up"` (empty moves up, tile below slides up)
-- User says "вниз" / "down" / "↓" → direction `"down"`
-- User says "влево" / "left" / "←" → direction `"left"`
-- User says "вправо" / "right" / "→" → direction `"right"`
-- User says "сдвинь плитку N" / "move tile N" → determine which direction empty must move to reach tile N (only works if tile N is adjacent to empty)
+- User says "up" / "↑" → direction `"up"` (empty moves up, tile below slides up)
+- User says "down" / "↓" → direction `"down"`
+- User says "left" / "←" → direction `"left"`
+- User says "right" / "→" → direction `"right"`
+- User says "move tile N" → determine which direction empty must move to reach tile N (only works if tile N is adjacent to empty)
 
 ## After Each Tool Call
 
+1. Display the board grid from the tool result exactly as returned.
+2. Show the move count.
+3. If the result contains `won: true` — congratulate the user warmly! 🎉
+
+## Important
+
+- ALWAYS pass the exact `board_state` array from the previous result into the next call.
+- If the tool returns an error, explain it to the user and ask them to try a different move.
+- After `new_game`, display the board and invite the user to start moving tiles.
 1. Display the board grid from the tool result exactly as returned.
 2. Show the move count.
 3. If the result contains `won: true` — congratulate the user warmly! 🎉
