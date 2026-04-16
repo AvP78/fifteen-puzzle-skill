@@ -34,7 +34,7 @@ fifteen-puzzle/
 2. Copy all files into the repo root.
 3. Create an empty `.nojekyll` file in the root (prevents Jekyll from processing SKILL.md).
 4. Go to **Settings → Pages** → Source: **main branch / root**.
-5. Your skill URL will be: `https://<username>.github.io/fifteen-puzzle-skill/SKILL.md`
+5. Your skill URL will be: `https://AvP78.github.io/fifteen-puzzle-skill/SKILL.md`
 
 > **Important:** GitHub raw URLs (`raw.githubusercontent.com`) won't work —
 > use the GitHub Pages deployment URL.
