@@ -9,7 +9,7 @@ powered by Gemma 4 (gemma-4-E2B-it-litert-lm or gemma-4-E4B-it-litert-lm).
 2. In the Gallery app → **Agent Skills** → **+** → **Load from URL**.
 3. Enter the URL to your hosted `SKILL.md`, e.g.:
    ```
-   https://<username>.github.io/<repo>/SKILL.md
+   https://AvP78.github.io/fifteen-puzzle-skill/SKILL.md
    ```
 
 ## How to Play
