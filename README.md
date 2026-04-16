@@ -1,4 +1,4 @@
-# 🧩 Fifteen Puzzle (Пятнашка) — Agent Skill for Google AI Edge Gallery
+# 🧩 Fifteen Puzzle — Agent Skill for Google AI Edge Gallery
 
 A skill that lets you play the classic 15-puzzle sliding tile game entirely on-device,
 powered by Gemma 4 (gemma-4-E2B-it-litert-lm or gemma-4-E4B-it-litert-lm).
@@ -14,8 +14,8 @@ powered by Gemma 4 (gemma-4-E2B-it-litert-lm or gemma-4-E4B-it-litert-lm).
 
 ## How to Play
 
-- **"Новая игра"** / **"New game"** — starts a freshly shuffled puzzle.
-- **"Вверх / Вниз / Влево / Вправо"** — slides tiles into the empty space.
+- **"New game"** — starts a freshly shuffled puzzle.
+- **"Up / Down / Left / Right"** — slides tiles into the empty space.
 - **"Move tile 5"** — the model figures out the right direction for tile 5.
 
 ## File Structure
@@ -51,7 +51,7 @@ fifteen-puzzle/
 ## Example Conversation
 
 ```
-User:   Давай сыграем в пятнашки!
+User:   play 15 puzzle!
 Gemma:  [calls run_js → new_game]
         Moves: 0
 
@@ -64,9 +64,9 @@ Gemma:  [calls run_js → new_game]
         ├────┼────┼────┼────┤
         │ 13 │  6 │ 15 │ 10 │
         └────┴────┴────┴────┘
-        Ход за вами! Куда двигаем?
+        Your move! What's next?
 
-User:   Вправо
+User:   To the right
 Gemma:  [calls run_js → move, direction:"right"]
         Moves: 1
         ...
