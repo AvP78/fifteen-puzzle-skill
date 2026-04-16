@@ -1,1 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body>
+<script>
+/**
+ * 15-Puzzle — Game Engine
+ * Google AI Edge Gallery Skill
+ *
+ * window['ai_edge_gallery_get_result'] is called by the app.
+ * Input  (data): JSON string { action, board?, direction?, moves? }
+ * Output: JSON string { result } or { error }
+ *
+ * Board: flat array of 16 integers, 0 = empty space.
+ * Goal:  [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0]
+ */
 
+window['ai_edge_gallery_get_result'] = async (data) => {
+  try {
+    const input = JSON.parse(data);
+
+    if (input.action === 'new_game') {
+      const board = generateBoard();
+      return JSON.stringify({ result: formatResult(board, 0, false) });
+    }
+
+    if (input.action === 'move') {
+      const board = input.board;
+      if (!Array.isArray(board) || board.length !== 16) {
+        return JSON.stringify({ error: 'Invalid board. Pass the board_state array from the previous result.' });
+      }
+      const direction = input.direction;
+      const moves = parseInt(input.moves, 10) || 0;
+
+      const moved = applyMove(board, direction);
+      if (moved.error) return JSON.stringify({ error: moved.error });
+
+      const newMoves = moves + 1;
+      const won = isWon(moved.board);
+      return JSON.stringify({ result: formatResult(moved.board, newMoves, won) });
+    }
+
+    return JSON.stringify({ error: 'Unknown action: ' + input.action });
+  } catch (e) {
+    return JSON.stringify({ error: 'Parse error: ' + e.message });
+  }
+};
+
+/* ── Board generation ──────────────────────────────────────────── */
+
+function generateBoard() {
+  // Start from goal state and make 120 random valid moves.
+  // This guarantees solvability without needing an inversion check.
+  const goal = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];
+  let board = [...goal];
+  const dirs = ['up','down','left','right'];
+  const opp  = { up:'down', down:'up', left:'right', right:'left' };
+  let last = '';
+
+  for (let i = 0; i < 120; i++) {
+    const valid = dirs.filter(d => d !== opp[last] && !applyMove(board, d).error);
+    if (!valid.length) break;
+    const dir = valid[Math.floor(Math.random() * valid.length)];
+    board = applyMove(board, dir).board;
+    last = dir;
+  }
+  return board;
+}
+
+/* ── Move logic ────────────────────────────────────────────────── */
+
+/**
+ * direction = where the EMPTY TILE moves.
+ * 'up'    → empty goes to smaller row index (tile below slides up)
+ * 'down'  → empty goes to larger row index
+ * 'left'  → empty goes to smaller col index
+ * 'right' → empty goes to larger col index
+ */
+function applyMove(board, direction) {
+  const emptyIdx = board.indexOf(0);
+  const row = Math.floor(emptyIdx / 4);
+  const col = emptyIdx % 4;
+
+  const delta = { up:[-1,0], down:[1,0], left:[0,-1], right:[0,1] }[direction];
+  if (!delta) return { error: 'Invalid direction "' + direction + '". Use up/down/left/right.' };
+
+  const newRow = row + delta[0];
+  const newCol = col + delta[1];
+
+  if (newRow < 0 || newRow > 3 || newCol < 0 || newCol > 3) {
+    return { error: 'Cannot move ' + direction + ': the empty space is already at the edge.' };
+  }
+
+  const swapIdx = newRow * 4 + newCol;
+  const newBoard = [...board];
+  newBoard[emptyIdx] = newBoard[swapIdx];
+  newBoard[swapIdx]  = 0;
+  return { board: newBoard };
+}
+
+/* ── Win detection ─────────────────────────────────────────────── */
+
+function isWon(board) {
+  for (let i = 0; i < 15; i++) if (board[i] !== i + 1) return false;
+  return board[15] === 0;
+}
+
+/* ── Formatting ────────────────────────────────────────────────── */
+
+function formatResult(board, moves, won) {
+  const top  = '┌────┬────┬────┬────┐';
+  const mid  = '├────┼────┼────┼────┤';
+  const bot  = '└────┴────┴────┴────┘';
+
+  const rows = [];
+  for (let r = 0; r < 4; r++) {
+    let line = '│';
+    for (let c = 0; c < 4; c++) {
+      const v = board[r * 4 + c];
+      line += v === 0 ? '    │' : (' ' + String(v).padStart(2) + ' │');
+    }
+    rows.push(line);
+  }
+
+  const grid = [
+    top,
+    rows[0], mid,
+    rows[1], mid,
+    rows[2], mid,
+    rows[3],
+    bot
+  ].join('\n');
+
+  const stateStr = JSON.stringify(board);
+
+  let result = `Moves: ${moves}\n\n${grid}\n\nboard_state: ${stateStr}`;
+  if (won) result += '\n\nwon: true';
+
+  return result;
+}
+</script>
+</body>
+</html>
